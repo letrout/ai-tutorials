@@ -5,7 +5,6 @@ Based on https://hackernoon.com/introduction-of-tensorflow-with-python-f4a9624f2
 """
 
 from __future__ import print_function
-import matplotlib
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import time
@@ -30,7 +29,6 @@ def get_times(maximum_time):
                 r2 = tf.random_uniform(shape=shape, minval=0, maxval=1, dtype=data_type)
                 dot_operation = tf.matmul(r2, r1)
 
-
             with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
                     start_time = time.time()
                     result = session.run(dot_operation)
@@ -42,7 +40,6 @@ def get_times(maximum_time):
 
             if time_taken > maximum_time:
                 return device_times, matrix_sizes
-
 
 device_times, matrix_sizes = get_times(1.5)
 gpu_times = device_times["/gpu:0"]
