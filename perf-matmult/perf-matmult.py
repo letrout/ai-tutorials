@@ -20,15 +20,18 @@ def get_times(maximum_time):
     for size in matrix_sizes:
         for device_name in device_times.keys():
 
-            print("####### Calculating on the " + device_name + " #######")
-
             shape = (size,size)
             data_type = tf.float16
-            with tf.device(device_name):
+            try:
+                tf.device(device_name)
                 r1 = tf.random_uniform(shape=shape, minval=0, maxval=1, dtype=data_type)
                 r2 = tf.random_uniform(shape=shape, minval=0, maxval=1, dtype=data_type)
                 dot_operation = tf.matmul(r2, r1)
+            except tf.errors.InvalidArgumentError:
+                # e.g., tried to run on /gpu:0 when we don't have one
+                continue
 
+            print("####### Calculating on the " + device_name + " #######")
             with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
                     start_time = time.time()
                     result = session.run(dot_operation)
