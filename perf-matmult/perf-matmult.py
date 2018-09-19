@@ -46,15 +46,9 @@ def get_times(maximum_time):
                 return device_times, matrix_sizes
 
 device_times, matrix_sizes = get_times(10)
-try:
-    gpu_times = device_times["/gpu:0"]
-except KeyError:
-    gpu_times = list()
-cpu_times = device_times["/cpu:0"]
 
-if len(gpu_times) > 0:
-    plt.plot(matrix_sizes[:len(gpu_times)], gpu_times, 'o-')
-plt.plot(matrix_sizes[:len(cpu_times)], cpu_times, 'o-')
+for device, times in device_times.items():
+    plt.plot(matrix_sizes[:len(times)], times, 'o-')
 plt.ylabel('Time')
 plt.xlabel('Matrix size')
 plt.show()
