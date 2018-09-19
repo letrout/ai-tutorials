@@ -44,7 +44,7 @@ def get_times(maximum_time):
             if time_taken > maximum_time:
                 return device_times, matrix_sizes
 
-device_times, matrix_sizes = get_times(1.5)
+device_times, matrix_sizes = get_times(5)
 gpu_times = device_times["/gpu:0"]
 cpu_times = device_times["/cpu:0"]
 
