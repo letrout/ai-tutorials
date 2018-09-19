@@ -48,7 +48,8 @@ def get_times(maximum_time):
 device_times, matrix_sizes = get_times(10)
 
 for device, times in device_times.items():
-    plt.plot(matrix_sizes[:len(times)], times, 'o-')
+    plt.plot(matrix_sizes[:len(times)], times, 'o-', label=device.strip('/'))
 plt.ylabel('Time')
 plt.xlabel('Matrix size')
+plt.legend()
 plt.show()
