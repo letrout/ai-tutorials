@@ -10,6 +10,11 @@ import os
 import tensorflow as tf
 import time
 
+MAX_ITER_SEC = 10
+MATRIX_MIN = 500
+MATRIX_MAX = 50000
+MATRIX_STEP = 50
+
 # Put a leash on tf logging to console
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
@@ -20,7 +25,7 @@ def get_times(maximum_time):
     }
     if tf.test.is_gpu_available():
         device_times["/gpu:0"] = []
-    matrix_sizes = range(500,50000,50)
+    matrix_sizes = range(MATRIX_MIN,MATRIX_MAX,MATRIX_STEP)
 
     for size in matrix_sizes:
         for device_name in device_times.keys():
@@ -45,7 +50,7 @@ def get_times(maximum_time):
             if time_taken > maximum_time:
                 return device_times, matrix_sizes
 
-device_times, matrix_sizes = get_times(10)
+device_times, matrix_sizes = get_times(MAX_ITER_SEC)
 
 for device, times in device_times.items():
     plt.plot(matrix_sizes[:len(times)], times, 'o-', label=device.strip('/'))
