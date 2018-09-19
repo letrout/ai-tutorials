@@ -34,11 +34,11 @@ def get_times(maximum_time):
 
             print("####### Calculating on the " + device_name + " #######")
             with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
-                    start_time = time.time()
-                    result = session.run(dot_operation)
-                    time_taken = time.time() - start_time
-                    #print(result)
-                    device_times[device_name].append(time_taken)
+                start_time = time.time()
+                result = session.run(dot_operation)
+                time_taken = time.time() - start_time
+                #print(result)
+                device_times[device_name].append(time_taken)
 
             print(device_times)
 
