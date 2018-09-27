@@ -7,6 +7,7 @@ Based on https://hackernoon.com/introduction-of-tensorflow-with-python-f4a9624f2
 from __future__ import print_function
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
 import tensorflow as tf
 import time
 
@@ -19,16 +20,17 @@ MATRIX_STEP = 50
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 def get_times(maximum_time):
-
-    device_times = {
-        "/cpu:0":[]
-    }
+    rows = list()
+    device_names = ["/cpu:0"]
     if tf.test.is_gpu_available():
-        device_times["/gpu:0"] = []
+        device_names.append("/gpu:0")
     matrix_sizes = range(MATRIX_MIN,MATRIX_MAX,MATRIX_STEP)
 
+    max_time = False
     for size in matrix_sizes:
-        for device_name in device_times.keys():
+        if max_time:
+            break
+        for device_name in device_names:
 
             shape = (size,size)
             data_type = tf.float16
@@ -43,17 +45,23 @@ def get_times(maximum_time):
                 result = session.run(dot_operation)
                 time_taken = time.time() - start_time
                 #print(result)
-                device_times[device_name].append(time_taken)
-
-            print(device_times)
+                rows.append({'matrix': size, device_name: time_taken})
 
             if time_taken > maximum_time:
-                return device_times, matrix_sizes
+                max_time = True
+                break
+    columns = list(['matrix'])
+    columns.extend(device_names)
+    return pd.DataFrame(rows, columns=columns)
 
-device_times, matrix_sizes = get_times(MAX_ITER_SEC)
+df = get_times(MAX_ITER_SEC)
 
-for device, times in device_times.items():
-    plt.plot(matrix_sizes[:len(times)], times, 'o-', label=device.strip('/'))
+matrix_sizes = df['matrix'].tolist()
+for column in df.columns.tolist():
+    if column == 'matrix':
+        continue
+    times = df[column].tolist()
+    plt.plot(matrix_sizes, times, 'o-', label=column.strip('/'))
 plt.ylabel('Time')
 plt.xlabel('Matrix size')
 plt.legend()
