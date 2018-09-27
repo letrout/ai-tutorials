@@ -27,9 +27,9 @@ def get_times(maximum_time):
         device_names.append("/gpu:0")
     matrix_sizes = range(MATRIX_MIN,MATRIX_MAX,MATRIX_STEP)
 
-    max_time = False
+    max_hit = False
     for size in matrix_sizes:
-        if max_time:
+        if max_hit:
             break
         for device_name in device_names:
 
@@ -49,7 +49,7 @@ def get_times(maximum_time):
                 rows.append({'matrix': size, device_name: time_taken})
 
             if time_taken > maximum_time:
-                max_time = True
+                max_hit = True
                 break
     columns = list(['matrix'])
     columns.extend(device_names)
