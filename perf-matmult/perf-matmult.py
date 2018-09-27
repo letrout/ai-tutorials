@@ -20,12 +20,8 @@ MATRIX_STEP = 50
 # Put a leash on tf logging to console
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
-def get_times(max_time, matrix_sizes):
+def get_times(max_time, matrix_sizes, device_names):
     rows = list()
-    device_names = ["/cpu:0"]
-    if tf.test.is_gpu_available():
-        device_names.append("/gpu:0")
-
     max_hit = False
     for size in matrix_sizes:
         if max_hit:
@@ -111,7 +107,12 @@ def parse_arguments():
 
 args = parse_arguments()
 matrix_sizes = range(args.matrix_min,args.matrix_max,args.matrix_step)
-df = get_times(args.max_time, matrix_sizes)
+device_names = list()
+if not args.no_cpu:
+    device_names.append("/cpu:0")
+if not args.no_gpu and tf.test.is_gpu_available():
+    device_names.append("/gpu:0")
+df = get_times(args.max_time, matrix_sizes, device_names)
 print(df)
 
 matrix_sizes = df['matrix'].tolist()
