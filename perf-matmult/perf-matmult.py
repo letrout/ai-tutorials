@@ -5,6 +5,7 @@ Based on https://hackernoon.com/introduction-of-tensorflow-with-python-f4a9624f2
 """
 
 from __future__ import print_function
+import argparse
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
@@ -54,6 +55,62 @@ def get_times(maximum_time):
     columns.extend(device_names)
     return pd.DataFrame(rows, columns=columns)
 
+def parse_arguments():
+    """
+    Parse script arguments
+    :return: argparse parser
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--max_time',
+        dest='max_time',
+        help="""Max run time in seconds (default={}""".format(MAX_ITER_SEC),
+        type=int,
+        default=MAX_ITER_SEC
+    )
+    parser.add_argument(
+        '--matrix_min',
+        dest='matrix_min',
+        help="""Minimum matrix size (default={}""".format(MATRIX_MIN),
+        type=int,
+        default=MATRIX_MIN
+    )
+    parser.add_argument(
+        '--matrix_max',
+        dest='matrix_max',
+        help="""Maximum matrix size (default={}""".format(MATRIX_MAX),
+        type=int,
+        default=MATRIX_MAX
+    )
+    parser.add_argument(
+        '--matrix_step',
+        dest='matrix_step',
+        help="""Matrix step size (default={}""".format(MATRIX_STEP),
+        type=int,
+        default=MATRIX_STEP
+    )
+    parser.add_argument(
+        '--no_cpu',
+        dest='no_cpu',
+        help='Do not run on CPU (default=False)',
+        action='store_true'
+    )
+    parser.add_argument(
+        '--no_gpu',
+        dest='no_gpu',
+        help='Do not run on GPU (default=False)',
+        action='store_true',
+    )
+    parser.add_argument(
+        '-d',
+        '--directory',
+        help='The directory in which to write csv file (default=None)',
+        type=str,
+        default=None
+    )
+    return parser.parse_args()
+
+args = parse_arguments()
 df = get_times(MAX_ITER_SEC)
 
 matrix_sizes = df['matrix'].tolist()
