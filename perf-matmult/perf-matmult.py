@@ -21,18 +21,16 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 def get_times(maximum_time):
     rows = list()
-    device_times = {
-        "/cpu:0":[]
-    }
+    device_names = ["/cpu:0"]
     if tf.test.is_gpu_available():
-        device_times["/gpu:0"] = []
+        device_names.append("/gpu:0")
     matrix_sizes = range(MATRIX_MIN,MATRIX_MAX,MATRIX_STEP)
 
     max_time = False
     for size in matrix_sizes:
         if max_time:
             break
-        for device_name in device_times.keys():
+        for device_name in device_names:
 
             shape = (size,size)
             data_type = tf.float16
@@ -47,16 +45,13 @@ def get_times(maximum_time):
                 result = session.run(dot_operation)
                 time_taken = time.time() - start_time
                 #print(result)
-                device_times[device_name].append(time_taken)
                 rows.append({'matrix': size, device_name: time_taken})
-
-            #print(device_times)
 
             if time_taken > maximum_time:
                 max_time = True
                 break
     columns = list(['matrix'])
-    columns.extend(list(device_times.keys()))
+    columns.extend(device_names)
     return pd.DataFrame(rows, columns=columns)
 
 df = get_times(MAX_ITER_SEC)
