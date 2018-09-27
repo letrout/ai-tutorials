@@ -111,7 +111,7 @@ def parse_arguments():
     return parser.parse_args()
 
 args = parse_arguments()
-df = get_times(MAX_ITER_SEC)
+df = get_times(args.max_time)
 
 matrix_sizes = df['matrix'].tolist()
 for column in df.columns.tolist():
