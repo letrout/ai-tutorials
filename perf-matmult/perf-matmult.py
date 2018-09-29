@@ -103,25 +103,36 @@ def parse_arguments():
         type=str,
         default=None
     )
+    parser.add_argument(
+        '-p',
+        '--plot',
+        dest='plot',
+        help='Plot the test runs',
+        action='store_true',
+    )
     return parser.parse_args()
 
-args = parse_arguments()
-matrix_sizes = range(args.matrix_min,args.matrix_max,args.matrix_step)
-device_names = list()
-if not args.no_cpu:
-    device_names.append("/cpu:0")
-if not args.no_gpu and tf.test.is_gpu_available():
-    device_names.append("/gpu:0")
-df = get_times(args.max_time, matrix_sizes, device_names)
-print(df)
+def plot_runs(df):
+    matrix_sizes = df['matrix'].tolist()
+    for column in df.columns.tolist():
+        if column == 'matrix':
+            continue
+        times = df[column].tolist()
+        plt.plot(matrix_sizes, times, 'o-', label=column.strip('/'))
+    plt.ylabel('Time')
+    plt.xlabel('Matrix size')
+    plt.legend()
+    plt.show()
 
-matrix_sizes = df['matrix'].tolist()
-for column in df.columns.tolist():
-    if column == 'matrix':
-        continue
-    times = df[column].tolist()
-    plt.plot(matrix_sizes, times, 'o-', label=column.strip('/'))
-plt.ylabel('Time')
-plt.xlabel('Matrix size')
-plt.legend()
-plt.show()
+if __name__ == "__main__":
+    args = parse_arguments()
+    matrix_sizes = range(args.matrix_min, args.matrix_max, args.matrix_step)
+    device_names = list()
+    if not args.no_cpu:
+        device_names.append("/cpu:0")
+    if not args.no_gpu and tf.test.is_gpu_available():
+        device_names.append("/gpu:0")
+    df = get_times(args.max_time, matrix_sizes, device_names)
+    print(df)
+    if args.plot:
+        plot_runs(df)
