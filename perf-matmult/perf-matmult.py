@@ -38,7 +38,14 @@ def get_times(max_time, matrix_sizes, device_names):
             print("####### Calculating on the " + device_name + " #######")
             with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
                 start_time = time.time()
-                result = session.run(dot_operation)
+                try:
+                    result = session.run(dot_operation)
+                except Exception as e:
+                    # eg, we run out of GPU memory
+                    print("hit exception: ", e)
+                    print("Matrix size attempted: ", size)
+                    max_hit = True
+                    break
                 time_taken = time.time() - start_time
                 #print(result)
                 rows.append({'matrix': size, device_name: time_taken})
