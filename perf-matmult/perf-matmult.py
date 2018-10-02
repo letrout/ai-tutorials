@@ -35,20 +35,23 @@ def get_times(max_time, matrix_sizes, device_names):
                 r2 = tf.random_uniform(shape=shape, minval=0, maxval=1, dtype=data_type)
                 dot_operation = tf.matmul(r2, r1)
 
-            print("####### Calculating on the " + device_name + " #######")
-            with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
-                start_time = time.time()
-                try:
+            print("####### Calculating on the {}, matrix size {} #######".format(device_name, size))
+            try:
+                with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
+                    start_time = time.time()
                     result = session.run(dot_operation)
-                except Exception as e:
-                    # eg, we run out of GPU memory
-                    print("hit exception: ", e)
-                    print("Matrix size attempted: ", size)
-                    max_hit = True
-                    break
-                time_taken = time.time() - start_time
-                #print(result)
-                rows.append({'matrix': size, device_name: time_taken})
+                    time_taken = time.time() - start_time
+                    #print(result)
+                    rows.append({'matrix': size, device_name: time_taken})
+            except tf.errors.InternalError as e:
+                # eg tensorflow.python.framework.errors_impl.InternalError: Failed to create session
+                # run out of GPU memory?
+                # still sometimes crashes with
+                # tensorflow/core/common_runtime/gpu/gpu_event_mgr.cc:206] Unexpected Event status: 1
+                print("hit exception: ", e)
+                print("Matrix size attempted: ", size)
+                max_hit = True
+                break
 
             if time_taken > max_time:
                 max_hit = True
