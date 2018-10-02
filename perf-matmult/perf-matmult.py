@@ -99,6 +99,7 @@ def parse_arguments():
     parser.add_argument(
         '-d',
         '--directory',
+        dest='directory',
         help='The directory in which to write csv file (default=None)',
         type=str,
         default=None
@@ -134,5 +135,10 @@ if __name__ == "__main__":
         device_names.append("/gpu:0")
     df = get_times(args.max_time, matrix_sizes, device_names)
     print(df)
+    if args.directory:
+        try:
+            df.to_csv(args.directory + '/matmult.csv')
+        except FileNotFoundError:
+            print("Unable to write to directory: ", args.directory)
     if args.plot:
         plot_runs(df)
