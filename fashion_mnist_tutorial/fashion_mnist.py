@@ -3,7 +3,7 @@
 2d CNN tutorial using the Fashion-MNIST dataset
 
 Ref:
-ttps://www.datacamp.com/community/tutorials/convolutional-neural-networks-python
+https://www.datacamp.com/community/tutorials/convolutional-neural-networks-python
 """
 
 from keras.datasets import fashion_mnist
@@ -131,7 +131,10 @@ plt.title('Training and validation loss')
 plt.legend()
 plt.show()
 
-# Train the model ith dropout
+# Train the model with dropout
+batch_size = 32
+epochs = 5
+num_classes = 10
 fashion_model = Sequential()
 fashion_model.add(
     Conv2D(
@@ -153,6 +156,11 @@ fashion_model.add(Conv2D(128, (3, 3), activation='linear',padding='same'))
 fashion_model.add(LeakyReLU(alpha=0.1))
 fashion_model.add(MaxPooling2D(pool_size=(2, 2),padding='same'))
 fashion_model.add(Dropout(0.4))
+fashion_model.add(Flatten())
+fashion_model.add(Dense(128, activation='linear'))
+fashion_model.add(LeakyReLU(alpha=0.1))
+fashion_model.add(Dropout(0.3))
+fashion_model.add(Dense(num_classes, activation='softmax'))
 
 fashion_model.summary()
 fashion_model.compile(
