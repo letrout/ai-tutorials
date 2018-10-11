@@ -6,12 +6,19 @@ Ref:
 https://www.datacamp.com/community/tutorials/convolutional-neural-networks-python
 """
 
+import keras
 from keras.datasets import fashion_mnist
 (train_X,train_Y), (test_X,test_Y) = fashion_mnist.load_data()
-
-import numpy as np
-from keras.utils import to_categorical
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.layers.advanced_activations import LeakyReLU
+from keras.models import Sequential,Input,Model
 import matplotlib.pyplot as plt
+from keras.utils import to_categorical
+import numpy as np
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 print('Training data shape : ', train_X.shape, train_Y.shape)
 print('Testing data shape : ', test_X.shape, test_Y.shape)
@@ -53,18 +60,11 @@ print('Original label:', train_Y[0])
 print('After conversion to one-hot:', train_Y_one_hot[0])
 
 # Split into train and test
-from sklearn.model_selection import train_test_split
 train_X,valid_X,train_label,valid_label = train_test_split(
     train_X, train_Y_one_hot, test_size=0.2, random_state=13)
 print(train_X.shape,valid_X.shape,train_label.shape,valid_label.shape)
 
-# Set up thr model
-import keras
-from keras.models import Sequential,Input,Model
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers.normalization import BatchNormalization
-from keras.layers.advanced_activations import LeakyReLU
+# Set up the model
 # The tutorial specifies batch=10 epochs=20
 # but I'm writing this on my GPU-less laptop, so turn it down for now
 batch_size = 32
@@ -231,7 +231,6 @@ for i, incorrect in enumerate(incorrect[:9]):
     plt.tight_layout()
 
 # Classification report
-from sklearn.metrics import classification_report
 target_names = ["Class {}".format(i) for i in range(num_classes)]
 print(classification_report(
     test_Y,
