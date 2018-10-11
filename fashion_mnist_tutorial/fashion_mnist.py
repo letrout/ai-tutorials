@@ -20,6 +20,9 @@ import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
+BATCH = 64
+EPOCHS = 20
+
 print('Training data shape : ', train_X.shape, train_Y.shape)
 print('Testing data shape : ', test_X.shape, test_Y.shape)
 
@@ -67,8 +70,8 @@ print(train_X.shape,valid_X.shape,train_label.shape,valid_label.shape)
 # Set up the model
 # The tutorial specifies batch=10 epochs=20
 # but I'm writing this on my GPU-less laptop, so turn it down for now
-batch_size = 32
-epochs = 5
+batch_size = BATCH
+epochs = EPOCHS
 num_classes = 10
 fashion_model = Sequential()
 fashion_model.add(
@@ -132,8 +135,8 @@ plt.legend()
 plt.show()
 
 # Train the model with dropout
-batch_size = 32
-epochs = 5
+batch_size = BATCH
+epochs = EPOCHS
 num_classes = 10
 fashion_model = Sequential()
 fashion_model.add(
