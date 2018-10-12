@@ -29,6 +29,8 @@ fig
 #this assumes our data format
 #For 3D data, "channels_last" assumes (conv_dim1, conv_dim2, conv_dim3, channels) while
 #"channels_first" assumes (channels, conv_dim1, conv_dim2, conv_dim3).
+img_rows = X_train.shape[1]
+img_cols = X_train.shape[2]
 if k.image_data_format() == 'channels_first':
     X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
     X_test = X_test.reshape(X_test.shape[0], 1, img_rows, img_cols)
