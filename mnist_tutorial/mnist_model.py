@@ -5,7 +5,10 @@ https://towardsdatascience.com/a-simple-2d-cnn-for-mnist-digit-recognition-a998d
 """
 
 import keras
+from keras import backend as k
 from keras.datasets import mnist
+from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
+from keras.models import Sequential
 import matplotlib.pyplot as plt
 
 #load mnist dataset
