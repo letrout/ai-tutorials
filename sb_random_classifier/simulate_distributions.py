@@ -27,7 +27,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+# TODO: make these script args
 DEFAULT_SAMPLES = 96
+DEFAULT_SERIES_PER_LABEL = 5
+DEFAULT_MEAN = 100
+CLEAN_CV_MINMAX = [0.001, 0.02]
+FUZZ_CV_MINMAX = [0.10, 0.40]
+
+# TODO: these will be deprecated?
 CLEAN_MEANS = [100]
 CLEAN_CVS = [0.001, 0.003, 0.005, 0.01, 0.02]
 FUZZ_MEANS = CLEAN_MEANS
@@ -36,6 +43,34 @@ PEAK_BASE_PARAMS = {
     'mean': 100,
     'cv': 0.02
 }
+
+class RandomDataset:
+    def __init__(self):
+        self.__df_clean = None
+        self.__df_fuzz = None
+        self.__df_peaks = None
+        self.__df_dips = None
+        self.__df_bimodal = None
+
+        self.__df_clean = create_normal_df(
+            repeat=5,
+            num_rows=DEFAULT_SAMPLES,
+            means=CLEAN_MEANS,
+            cvs=CLEAN_CVS)
+        self.__df_fuzz = create_normal_df(
+            repeat=5,
+            num_rows=DEFAULT_SAMPLES,
+            means=FUZZ_MEANS,
+            cvs=FUZZ_CVS)
+
+    @property
+    def df_clean(self):
+        return self.__df_clean
+
+    @property
+    def df_fuzz(self):
+        return self.__df_fuzz
+
 
 def create_normal_series(mean, cv, count=DEFAULT_SAMPLES):
     """
@@ -99,15 +134,10 @@ def plot_series_line(df):
 
 if __name__ == '__main__':
     np.random.seed()
-    df_clean = create_normal_df(
-        repeat=5, num_rows=DEFAULT_SAMPLES, means=CLEAN_MEANS, cvs=CLEAN_CVS
-    )
-    df_fuzz = create_normal_df(
-        repeat=5, num_rows=DEFAULT_SAMPLES, means=FUZZ_MEANS, cvs=FUZZ_CVS
-    )
-    print(df_clean)
-    print(df_fuzz)
-    df_clean.shape
+    ranset = RandomDataset()
+    print(ranset.df_clean)
+    print(ranset.df_fuzz)
+    ranset.df_clean.shape
     #peak_series = create_peak_series(40, 0.05, 0.1, 100)
     #plot_series_hist(peak_series)
     #plot_series_line(peak_series)
