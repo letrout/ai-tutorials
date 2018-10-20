@@ -29,7 +29,7 @@ import pandas as pd
 
 # TODO: make these script args
 DEFAULT_SAMPLES = 96
-DEFAULT_SERIES_PER_LABEL = 5
+DEFAULT_SERIES_PER_LABEL = 10
 DEFAULT_MEAN = 100
 
 # TODO: these will be deprecated?
@@ -49,13 +49,13 @@ class RandomDataset:
         self.__df_bimodal = None
 
         self.__df_clean = create_normal_df(
-            repeat=5,
-            num_rows=DEFAULT_SAMPLES,
+            num_series=DEFAULT_SERIES_PER_LABEL,
+            num_samples=DEFAULT_SAMPLES,
             mean=DEFAULT_MEAN,
             cvs=CLEAN_CVS)
         self.__df_fuzz = create_normal_df(
-            repeat=5,
-            num_rows=DEFAULT_SAMPLES,
+            num_series=DEFAULT_SERIES_PER_LABEL,
+            num_samples=DEFAULT_SAMPLES,
             mean=DEFAULT_MEAN,
             cvs=FUZZ_CVS)
 
@@ -78,13 +78,19 @@ def create_normal_series(cv, mean=DEFAULT_MEAN, count=DEFAULT_SAMPLES):
     """
     return pd.Series(np.random.normal(mean, cv * mean, count))
 
-def create_normal_df(repeat=5, num_rows=DEFAULT_SAMPLES, mean=DEFAULT_MEAN, cvs=[]):
+def create_normal_df(
+        num_series=DEFAULT_SERIES_PER_LABEL,
+        num_samples=DEFAULT_SAMPLES,
+        mean=DEFAULT_MEAN,
+        cvs=[]):
     df = pd.DataFrame()
+    i = 0
     j = -1
-    for i in range(0, repeat, 1):
+    while (i < num_series):
         for cv in cvs:
+            i += 1
             j += 1
-            series = create_normal_series(cv, mean, num_rows)
+            series = create_normal_series(cv, mean, num_samples)
             df.insert(j, j, series)
     return df
 
