@@ -90,7 +90,7 @@ def create_normal_df(
     df = pd.DataFrame()
     i = 0
     j = -1
-    while (i < num_series):
+    while i < num_series:
         for cv in cvs:
             i += 1
             j += 1
@@ -117,13 +117,19 @@ def create_peak_series(peak_mean, peak_cv, peak_freq, count, series_base=None):
     return series_base.apply(peaks)
 
 def create_peak_df(
-        repeat=5, num_rows=DEFAULT_SAMPLES, peak_means=[], peak_cvs=[], peak_freqs=[]):
+        num_series=DEFAULT_SERIES_PER_LABEL,
+        num_rows=DEFAULT_SAMPLES,
+        peak_means=[],
+        peak_cvs=[],
+        peak_freqs=[]):
     df = pd.DataFrame()
+    i = 0
     j = -1
-    for i in range(0, repeat, 1):
+    while i < num_series:
         for mean in peak_means:
             for cv in peak_cvs:
                 for freq in peak_freqs:
+                    i += 1
                     j += 1
                     series = create_peak_series(mean, cv, freq, num_rows)
                     df.insert(j, j, series)
