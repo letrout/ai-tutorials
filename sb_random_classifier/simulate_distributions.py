@@ -41,21 +41,25 @@ PEAK_BASE_PARAMS = {
 }
 
 class RandomDataset:
-    def __init__(self):
-        self.__df_clean = None
-        self.__df_fuzz = None
-        self.__df_peaks = None
-        self.__df_dips = None
-        self.__df_bimodal = None
+    __df_clean = None
+    __df_fuzz = None
+    __df_peaks = None
+    __df_dips = None
+    __df_bimodal = None
 
+    def __init__(self,
+                 seed=None,
+                 samples=DEFAULT_SAMPLES,
+                 series_per_label=DEFAULT_SERIES_PER_LABEL):
+        np.random.seed(seed=seed)
         self.__df_clean = create_normal_df(
-            num_series=DEFAULT_SERIES_PER_LABEL,
-            num_samples=DEFAULT_SAMPLES,
+            num_series=series_per_label,
+            num_samples=samples,
             mean=DEFAULT_MEAN,
             cvs=CLEAN_CVS)
         self.__df_fuzz = create_normal_df(
-            num_series=DEFAULT_SERIES_PER_LABEL,
-            num_samples=DEFAULT_SAMPLES,
+            num_series=series_per_label,
+            num_samples=samples,
             mean=DEFAULT_MEAN,
             cvs=FUZZ_CVS)
 
@@ -134,8 +138,7 @@ def plot_series_line(df):
     plt.show()
 
 if __name__ == '__main__':
-    np.random.seed()
-    ranset = RandomDataset()
+    ranset = RandomDataset(seed=42)
     print(ranset.df_clean)
     print(ranset.df_fuzz)
     ranset.df_clean.shape
