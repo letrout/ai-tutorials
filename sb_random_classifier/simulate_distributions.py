@@ -27,8 +27,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# TODO: make these script args
 DEFAULT_SAMPLES = 96
+# TODO: make these script args
 DEFAULT_SERIES_PER_LABEL = 10
 DEFAULT_MEAN = 100
 
@@ -41,28 +41,33 @@ PEAK_BASE_PARAMS = {
 }
 
 class RandomDataset:
-    __df_clean = None
-    __df_fuzz = None
-    __df_peaks = None
-    __df_dips = None
-    __df_bimodal = None
+    __dataframes = {
+        'clean': None,
+        'fuzz': None,
+        'peaks': None,
+        'dips': None,
+        'bimodal': None
+    }
 
     def __init__(self,
                  seed=None,
                  samples=DEFAULT_SAMPLES,
                  series_per_label=DEFAULT_SERIES_PER_LABEL):
         np.random.seed(seed=seed)
-        self.__df_clean = create_normal_df(
+        self.__dataframes['clean'] = create_normal_df(
             num_series=series_per_label,
             num_samples=samples,
             mean=DEFAULT_MEAN,
             cvs=CLEAN_CVS)
-        self.__df_fuzz = create_normal_df(
+        self.__dataframes['fuzz'] = create_normal_df(
             num_series=series_per_label,
             num_samples=samples,
             mean=DEFAULT_MEAN,
             cvs=FUZZ_CVS)
 
+    @property
+    def dataframes(self):
+        return self.__dataframes
     @property
     def df_clean(self):
         return self.__df_clean
@@ -71,6 +76,12 @@ class RandomDataset:
     def df_fuzz(self):
         return self.__df_fuzz
 
+    def frame_to_dataset(self, label):
+        dataset = self.__dataframes[label].transpose()
+        dataset.insert(0,
+                       'label',
+                       pd.Series(label, index=self.__dataframes[label].index))
+        return dataset
 
 def create_normal_series(cv, mean=DEFAULT_MEAN, count=DEFAULT_SAMPLES):
     """
