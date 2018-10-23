@@ -83,6 +83,20 @@ class RandomDataset:
                        pd.Series(label, index=self.__dataframes[label].index))
         return dataset
 
+    def build_dataset(self):
+        full_dataset = None
+        for label, frame in self.dataframes.items():
+            if frame is not None:
+                ds = self.frame_to_dataset(label)
+                if full_dataset is not None:
+                    print('append ds for label', label)
+                    full_dataset = full_dataset.append(ds)
+                else:
+                    print('new ds for label:', label)
+                    full_dataset = ds
+        return full_dataset
+
+
 def create_normal_series(cv, mean=DEFAULT_MEAN, count=DEFAULT_SAMPLES):
     """
     Create a series of normal distribution
@@ -156,9 +170,7 @@ def plot_series_line(df):
 
 if __name__ == '__main__':
     ranset = RandomDataset(seed=42)
-    print(ranset.df_clean)
-    print(ranset.df_fuzz)
-    ranset.df_clean.shape
-    #peak_series = create_peak_series(40, 0.05, 0.1, 100)
+    ds = ranset.build_dataset()
+    print(ds)
     #plot_series_hist(peak_series)
     #plot_series_line(peak_series)
