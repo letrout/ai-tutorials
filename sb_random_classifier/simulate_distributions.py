@@ -23,12 +23,12 @@ In this script I use "cv" as shorthand for coefficient of variation,
 or stddev/mean
 """
 
+import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 DEFAULT_SAMPLES = 96
-# TODO: make these script args
 DEFAULT_SERIES_PER_LABEL = 10
 DEFAULT_MEAN = 100
 
@@ -169,8 +169,42 @@ def plot_series_line(df):
     df.plot.line()
     plt.show()
 
+def parse_arguments():
+    """
+    Parse script arguments
+    :return: argparse parser
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--samples',
+        dest='samples',
+        help="""Number of samples in each series (default={})""".format(
+            DEFAULT_SAMPLES),
+        type=int,
+        default=DEFAULT_SAMPLES
+    )
+    parser.add_argument(
+        '--series_per_label',
+        dest='series_per_label',
+        help="""Number of series to generate for each label (default={})""".format(
+            DEFAULT_SERIES_PER_LABEL),
+        type=int,
+        default=DEFAULT_SERIES_PER_LABEL
+    )
+    parser.add_argument(
+        '--seed',
+        dest='seed',
+        help="""Random seed (default=None)""",
+        type=int,
+        default=None
+    )
+    return parser.parse_args()
+
 if __name__ == '__main__':
-    ranset = RandomDataset(seed=42)
+    args = parse_arguments()
+    ranset = RandomDataset(seed=args.seed,
+                           samples=args.samples,
+                           series_per_label=args.series_per_label)
     ds = ranset.build_dataset()
     print(ds)
     #plot_series_hist(peak_series)
