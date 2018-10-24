@@ -30,7 +30,7 @@ import pandas as pd
 
 DEFAULT_SAMPLES = 96
 DEFAULT_SERIES_PER_LABEL = 10
-DEFAULT_MEAN = 100
+BASE_MEAN = 100
 
 # TODO: pick random CVs between a min/max?
 CLEAN_CVS = [0.001, 0.003, 0.005, 0.01, 0.02]
@@ -58,12 +58,12 @@ class RandomDataset:
         self.__dataframes['clean'] = create_normal_df(
             num_series=series_per_label,
             num_samples=samples,
-            mean=DEFAULT_MEAN,
+            mean=BASE_MEAN,
             cvs=CLEAN_CVS)
         self.__dataframes['fuzz'] = create_normal_df(
             num_series=series_per_label,
             num_samples=samples,
-            mean=DEFAULT_MEAN,
+            mean=BASE_MEAN,
             cvs=FUZZ_CVS)
 
     @property
@@ -98,7 +98,7 @@ class RandomDataset:
         return full_dataset
 
 
-def create_normal_series(cv, mean=DEFAULT_MEAN, count=DEFAULT_SAMPLES):
+def create_normal_series(cv, mean=BASE_MEAN, count=DEFAULT_SAMPLES):
     """
     Create a series of normal distribution
     :param mean: mean of the distribution
@@ -111,7 +111,7 @@ def create_normal_series(cv, mean=DEFAULT_MEAN, count=DEFAULT_SAMPLES):
 def create_normal_df(
         num_series=DEFAULT_SERIES_PER_LABEL,
         num_samples=DEFAULT_SAMPLES,
-        mean=DEFAULT_MEAN,
+        mean=BASE_MEAN,
         cvs=[]):
     df = pd.DataFrame()
     i = 0
@@ -136,7 +136,7 @@ def create_peak_series(peak_mean, peak_cv, peak_freq, count, series_base=None):
     # Create a "base" series on which we will apply our peaks
     if series_base is None or count != len(series_base.index):
         series_base = create_normal_series(
-            CLEAN_CVS[0], DEFAULT_MEAN, count
+            CLEAN_CVS[0], BASE_MEAN, count
         )
     peaks = lambda x: np.random.normal(peak_mean, peak_cv * peak_mean, 1)[0]\
        if np.random.uniform() < peak_freq else 0
