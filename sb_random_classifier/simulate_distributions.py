@@ -32,7 +32,7 @@ DEFAULT_SAMPLES = 96
 DEFAULT_SERIES_PER_LABEL = 10
 DEFAULT_MEAN = 100
 
-# TODO: these will be deprecated?
+# TODO: pick random CVs between a min/max?
 CLEAN_CVS = [0.001, 0.003, 0.005, 0.01, 0.02]
 FUZZ_CVS = [0.10, 0.20, 0.25, 0.30, 0.40]
 PEAK_BASE_PARAMS = {
@@ -48,6 +48,7 @@ class RandomDataset:
         'dips': None,
         'bimodal': None
     }
+    __dataset = None
 
     def __init__(self,
                  seed=None,
@@ -89,11 +90,11 @@ class RandomDataset:
             if frame is not None:
                 ds = self.frame_to_dataset(label)
                 if full_dataset is not None:
-                    print('append ds for label', label)
                     full_dataset = full_dataset.append(ds)
                 else:
                     print('new ds for label:', label)
                     full_dataset = ds
+        self.__dataset = full_dataset
         return full_dataset
 
 
