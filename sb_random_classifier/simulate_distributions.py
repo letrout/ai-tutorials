@@ -41,6 +41,13 @@ PEAK_BASE_PARAMS = {
 }
 
 class RandomDataset:
+    """
+    A class to manufacture a dataset to simulate patterns seen
+    in repeated sysbench memory tests.
+    Intention is to use this dataset to train a machine learning
+    model that can then be used to classify sysbench memory (or similar)
+    test results
+    """
     __dataframes = {
         'clean': None,
         'fuzz': None,
@@ -50,10 +57,20 @@ class RandomDataset:
     }
     __dataset = None
 
-    def __init__(self,
-                 seed=None,
-                 samples=DEFAULT_SAMPLES,
-                 series_per_label=DEFAULT_SERIES_PER_LABEL):
+    def __init__(
+            self,
+            seed=None,
+            samples=DEFAULT_SAMPLES,
+            series_per_label=DEFAULT_SERIES_PER_LABEL
+    ):
+        """
+        Initializer
+        :param seed: random seed (specify to get repeatable results)
+        :param samples: Number of samples for each data series
+        (a series simulates repeated sysbench memory results at a given set
+        of test parameters)
+        :param series_per_label: Number of series per class label
+        """
         np.random.seed(seed=seed)
         self.__dataframes['clean'] = create_normal_df(
             num_series=series_per_label,
@@ -68,16 +85,25 @@ class RandomDataset:
 
     @property
     def dataframes(self):
+        """
+        getter for private __dataframes structure
+        :return: __dataframes private variable
+        """
         return self.__dataframes
     @property
-    def df_clean(self):
-        return self.__df_clean
-
-    @property
-    def df_fuzz(self):
-        return self.__df_fuzz
+    def dataset(self):
+        """
+        getter for __dataset
+        :return: __dataset private variable
+        """
+        return self.__dataset
 
     def frame_to_dataset(self, label):
+        """
+        Convert a label's dataframe data to a dataset-appropriate shape
+        :param label: The class label identifying the dataframe
+        :return: dataset-shaped dataframe, with labels in column 0
+        """
         dataset = self.__dataframes[label].transpose()
         dataset.insert(0,
                        'label',
@@ -85,6 +111,10 @@ class RandomDataset:
         return dataset
 
     def build_dataset(self):
+        """
+        Create a full dataset from all of the labels' dataframes
+        :return: dataset-shaped dataframe, with labels in column 0
+        """
         full_dataset = None
         for label, frame in self.dataframes.items():
             if frame is not None:
@@ -113,6 +143,14 @@ def create_normal_df(
         num_samples=DEFAULT_SAMPLES,
         mean=BASE_MEAN,
         cvs=[]):
+    """
+    Create a dataframe with random series of normal distribution
+    :param num_series: The number of data series to include in this dataframe
+    :param num_samples: The length of each data series
+    :param mean: The mean of the data series
+    :param cvs: A list of coefficient of variances for each series
+    :return: A dataframe of multiple random data series, with series in columns
+    """
     df = pd.DataFrame()
     i = 0
     j = -1
@@ -144,10 +182,20 @@ def create_peak_series(peak_mean, peak_cv, peak_freq, count, series_base=None):
 
 def create_peak_df(
         num_series=DEFAULT_SERIES_PER_LABEL,
-        num_rows=DEFAULT_SAMPLES,
+        num_samples=DEFAULT_SAMPLES,
         peak_means=[],
         peak_cvs=[],
         peak_freqs=[]):
+    """
+    Create a dataframe with random series of normal distribution
+    and periodic peaks
+    :param num_series: The number of data series to include in this dataframe
+    :param num_samples: The length of each data series
+    :param peak_means: A list of means for the peak values
+    :param peak_cvs: A list of coefficient of variances for the peaks
+    :param peak_freqs: A list of frequencies for peak occurrences
+    :return: A dataframe of multiple random data series, with series in columns
+    """
     df = pd.DataFrame()
     i = 0
     j = -1
@@ -157,7 +205,7 @@ def create_peak_df(
                 for freq in peak_freqs:
                     i += 1
                     j += 1
-                    series = create_peak_series(mean, cv, freq, num_rows)
+                    series = create_peak_series(mean, cv, freq, num_samples)
                     df.insert(j, j, series)
     return df
 
